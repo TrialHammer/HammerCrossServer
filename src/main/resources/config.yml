@@ -1,0 +1,252 @@
+# HammerCrossServer
+# 每个 Paper 服务器使用同一份配置结构，但必须填写不同的 server-id。
+# 所有服务器共享同一个 Redis、同一个 prefix。
+
+# 配置结构版本，升级时由插件维护。
+config-version: 1
+
+server-id: "survival-1"
+
+local:
+  # 本服显示名称，可写 MiniMessage 颜色和 %symbol.key% 符号。
+  display-name: "<gradient:#56CCF2:#2F80ED>生存服</gradient>"
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  username: ""
+  password: ""
+  database: 0
+  ssl: false
+  connection-timeout-ms: 3000
+  socket-timeout-ms: 3000
+  # 所有服务器必须一致。
+  prefix: "hammer:cross"
+
+sync:
+  chat: true
+  tab: true
+  join: true
+  quit: true
+  completion: true
+  motd: true
+  dm: true
+
+# PlaceholderAPI 支持：在聊天/加入退出/Tab 等模板中解析 %placeholder% 变量，
+# 例如用 %player_title% 展示玩家称号。需要安装 PlaceholderAPI 及对应扩展。
+papi:
+  enabled: true
+
+presence:
+  # 在线状态心跳周期。建议 5~15 秒。
+  heartbeat-seconds: 10
+  # 定期从 Redis 校准本服缓存。
+  reconcile-seconds: 5
+  # 超过该时间未更新的玩家会被视为失效；至少为 heartbeat-seconds 的 3 倍。
+  stale-seconds: 30
+
+chat:
+  # 是否也把本服聊天套用本服模板；关闭则本服玩家看到 "玩家: 内容" 的纯文本形式。
+  format-local: true
+  # 单条聊天最大字符数，防止恶意超长消息。
+  max-length: 512
+  # 由插件完全接管公共聊天：取消原生广播，改由插件按模板发送到本服并同步到其它服（避免重复）。
+  override-vanilla: true
+  # 在控制台记录完整聊天内容（每台服务器都会各自记录它收到的聊天）。
+  log-to-console: true
+  # 链接解析：把消息中的 http(s):// 与 www. 开头的地址变成可点击链接（类似 TrChat）。
+  link:
+    enabled: true
+    color: "#58A6FF"
+    underline: true
+    open-in-browser: true
+    hover: "<gray>点击打开链接</gray>"
+  # 聊天物品展示（TrChat 兼容写法）。
+  item:
+    enabled: true
+    # 触发物品展示的键（不区分大小写）。槽位写法为 “键-数字”，数字从 1 开始，
+    # 例如 [item-3] / %i-3% 表示玩家物品栏第 3 格；不带数字则为主手。
+    # 与 TrChat 相同：默认键集合如下。
+    keys:
+      - "%i%"
+      - "%i"
+      - "%item%"
+      - "%item"
+      - "[i]"
+      - "[item]"
+      - "【i】"
+      - "【item】"
+    # 展示格式，<item> 会替换为物品名。
+    format: "<aqua>[<item>]</aqua>"
+    # 鼠标悬停时显示完整物品信息（附魔、耐久、NBT 等）。
+    hover: true
+    # 是否把物品数据同步给其它服务器（接收方用本地数据重建悬浮信息）。
+    cross-server: true
+    # 单个物品序列化的最大字节数（Base64 之前），防止滥用。
+    max-serialized-bytes: 8192
+    # 单条聊天最多允许展示的物品数量。
+    max-items-per-message: 8
+    # 空手 / 空格子使用占位符时显示的内容。
+    empty-text: "<gray>[空手]</gray>"
+
+join-quit:
+  # 本服玩家的加入/退出是否也按模板在本服广播。
+  broadcast-local: true
+  # 是否隐藏 Paper 原生加入/退出消息（避免与跨服模板重复）。
+  suppress-vanilla: true
+
+dm:
+  # 跨服私聊（/msg /tell /w /whisper 等）总开关。
+  enabled: true
+  # 会被拦截做跨服路由的私聊命令（去掉 /，不含命名空间）。
+  commands:
+    - msg
+    - tell
+    - w
+    - whisper
+    - m
+  # 回复命令：会按上一次跨服私聊的发信人进行回复。
+  reply-commands:
+    - r
+    - reply
+  # 发送成功后是否在发送方显示一条 “已发送给 xxx” 的确认（用 formats.dm-send 渲染）。
+  sender-confirm: true
+  # 连“本地私聊”也由插件接管（统一格式化 + 记录日志）。关闭则本地私聊仍走原生，仅跨服私聊走插件。
+  override-vanilla: true
+  # 在控制台记录完整私聊内容（每台相关服务器都会记录）。
+  log-to-console: true
+
+tab:
+  # 是否也重排本服玩家的 Tab 显示名。
+  format-local-players: true
+  # 虚拟 Tab 条目的延迟显示值，0 表示不显示延迟条。
+  latency: 0
+
+completion:
+  # 通过 PacketEvents 兜底修改客户端 Tab 补全响应，兼容 Brigadier 命令。
+  packet-fallback: true
+  # smart=true 时仅对玩家名相关命令和已被识别为玩家名前缀的输入补全。
+  # smart=false 时会对所有命令的参数位置尝试补全。
+  smart: true
+  # smart=true 且此列表非空时，只对这些命令补全（不需要写 /）。
+  commands:
+    - msg
+    - tell
+    - w
+    - whisper
+    - tpa
+    - tpahere
+    - tpaccept
+    - tpdeny
+    - pay
+    - mail
+    - kick
+    - ban
+    - pardon
+    - op
+    - deop
+    - gamemode
+    - give
+    - clear
+    - kill
+    - mute
+    - unmute
+    - warn
+    - invsee
+    - enderchest
+    - spectate
+  # 前缀至少多少字符才补全，0 表示输入任意字符都可以。
+  min-prefix-length: 0
+  max-results: 100
+
+motd:
+  sync-player-count: true
+  sync-max-players: true
+  # aggregate: 所有服 max-players 之和；local: 本服值；fixed: 使用 fixed-max-players。
+  max-players-mode: "aggregate"
+  fixed-max-players: 100
+  # 是否在服务器列表悬浮样本中混入跨服玩家。
+  cross-server-sample: false
+  sample-size: 12
+  # 是否用下方 formats.motd 覆盖服务器列表 MOTD 文本。
+  override-motd: true
+
+# 模板支持：
+#   MiniMessage: <gray> <bold> <gradient:...> <#RRGGBB>
+#   传统颜色: &7 &a &l &#FFAA00，亦支持 § 颜色（包括 PAPI 返回值）
+#   占位符: <server> <server_id> <player> <player_display> <message>
+#           <online> <max> <local_online>
+#   符号:   <symbol:star> 或 %symbol.star%
+# 远程玩家名、远程聊天内容永远不会按 MiniMessage 解析，只会作为纯文本插入。
+formats:
+  # 每台服都可设置自己的 KOOK 入站格式，无须启用 kook。
+  kook-chat: "<dark_gray>[<gold><server></gold>]</dark_gray> <gray><player>:</gray> <white><message></white>"
+  chat: "<gray>[<server>]</gray> <white><player></white> <dark_gray>»</dark_gray> <message>"
+  join: "<green><player></green> <gray>加入了</gray> <aqua><server></aqua>"
+  quit: "<yellow><player></yellow> <gray>离开了</gray> <aqua><server></aqua>"
+  tab: "<white><player></white> <dark_gray>@</dark_gray> <gray><server></gray>"
+  # 发送方看到的确认；<target> 目标名，<server> 目标所在服显示名，<message> 内容。
+  dm-send: "<gray>[私聊]</gray> <white>你</white> <dark_gray>→</dark_gray> <aqua><target></aqua> <dark_gray>@</dark_gray> <gray><server></gray><gray>:</gray> <white><message></white>"
+  # 接收方看到的私聊；<player> 发送者名，<server> 发送者所在服显示名，<message> 内容。
+  dm-receive: "<gray>[私聊]</gray> <aqua><player></aqua> <dark_gray>@</dark_gray> <gray><server></gray> <dark_gray>→</dark_gray> <white>你</white><gray>:</gray> <white><message></white>"
+  motd:
+    - "<gradient:#56CCF2:#2F80ED>Hammer Network</gradient>"
+    - "<gray>全服在线 <white><online></white>/<white><max></white></gray> <dark_gray>|</dark_gray> <gray>本服 <white><local_online></white></gray>"
+
+# 本服使用的符号映射。资源包服可以使用私用区字符，例如 "\uE001"。
+# 注意：接收方永远使用自己的符号表，源服务器只发送结构化内容。
+symbols:
+  star: "★"
+  moon: "☾"
+  divider: " » "
+  dot: "•"
+
+# 远程服务器覆盖项，可选。未列出的服务器使用上面的全局 formats/display-name。
+# 每个接收方服务器可以独立决定如何显示来自某台服务器的内容。
+servers:
+  skyblock-1:
+    display-name: "<gradient:#A8FF78:#78FFD6>空岛服</gradient>"
+    formats:
+      chat: "<gray>[<server>]</gray> <white><player></white><gray>：</gray> <message>"
+      tab: "<white><player></white> <dark_gray>@</dark_gray> <aqua><server></aqua>"
+      dm-receive: "<gray>[来自 <server>]</gray> <aqua><player></aqua><gray> 悄悄对你说：</gray><white><message></white>"
+    symbols:
+      star: "☆"
+  resourcepack-1:
+    display-name: "<gradient:#FDC830:#F37335>资源包服</gradient>"
+    formats:
+      join: "<green><player></green> <gray>进入了</gray> <gold><server></gold>"
+    symbols:
+      moon: "\uE001"
+
+# 全网只选一台开启。其它服不需要填 Token，也不会启动 KOOK 客户端。
+# 复用现有跨服消息链路，所有服保持原有 Redis 配置即可。
+kook:
+  enabled: false
+  token: ""
+  channel: ""  # KOOK 文字频道 ID，建议用引号包住。
+  server-name: "Minecraft 网络"
+  avatar-url: "https://cravatar.eu/helmavatar/%player_name%/256.png"
+  chat:
+    kook-to-minecraft:
+      enabled: true
+    minecraft-to-kook:
+      enabled: true
+    player-join:
+      enabled: true
+    player-quit:
+      enabled: true
+  online-players:
+    enabled: true
+    keywords: ["在线玩家", "在线列表"]
+    separator: "，"
+  cards:
+    join-theme: INFO
+    quit-theme: DANGER
+    size: SM
+  messages:
+    minecraft2kook: "[%server_name%] %player%: %message%"
+    player-join: "%player% 加入了 %server_name%。"
+    player-quit: "%player% 离开了 %server_name%。"
+    online-player-list: "[%server_name% (%online_players%)]: %list%"
+    no-online-player: "没有玩家在线。"

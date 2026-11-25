@@ -1,0 +1,30 @@
+name: HammerCrossServer
+version: '${project.version}'
+main: moe.hammer.cross.server.HammerCrossServer
+api-version: '${paper.api-version}'
+authors: [Hammer]
+description: Redis cross-server chat, tab, completion, join reminder and MOTD sync for native Paper.
+website: https://hammer.moe
+depend: [packetevents]
+softdepend: [PlaceholderAPI, floodgate]
+commands:
+  hammercross:
+    description: HammerCrossServer status and configuration command
+    usage: /hammercross <status|reload|players>
+    aliases: [hcs]
+    permission: hammercross.admin
+  glist:
+    description: List all online players across all servers
+    usage: /glist [server]
+    aliases: [globalist, gl]
+    permission: hammercross.glist
+permissions:
+  hammercross.admin:
+    description: Allows using HammerCrossServer admin commands
+    default: op
+  hammercross.dm:
+    description: Allows sending cross-server private messages
+    default: true
+  hammercross.glist:
+    description: Allows listing all online players across servers
+    default: true

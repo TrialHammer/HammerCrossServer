@@ -1,0 +1,22 @@
+# 语言文件结构版本，升级时由插件维护。
+config-version: 1
+
+prefix: "<gradient:#56CCF2:#2F80ED>[跨服]</gradient> "
+no-permission: "<red>你没有权限执行这个命令。"
+unknown-command: "<red>未知子命令。用法：/hammercross <status|reload|players|glist>"
+status: "<gray>本服：</gray><white><server></white> <dark_gray>(</dark_gray><gray><server_id></gray><dark_gray>)</dark_gray> <dark_gray>|</dark_gray> <gray>Redis：</gray><white><redis></white> <dark_gray>|</dark_gray> <gray>全服在线：</gray><white><online></white> <dark_gray>|</dark_gray> <gray>本服在线：</gray><white><local_online></white> <dark_gray>|</dark_gray> <gray>已知服务器：</gray><white><servers></white>"
+status-server: "  <dark_gray>-</dark_gray> <aqua><server></aqua> <dark_gray>(</dark_gray><gray><server_id></gray><dark_gray>)</dark_gray> <white><online></white><gray>/</gray><white><max></white>"
+players-header: "<gray>跨服在线玩家（</gray><white><count></white><gray>）：</gray>"
+players-line: "  <dark_gray>-</dark_gray> <white><player></white> <dark_gray>@</dark_gray> <aqua><server></aqua> <dark_gray>(</dark_gray><gray><server_id></gray><dark_gray>)</dark_gray>"
+no-players: "<gray>当前没有已知的在线玩家。"
+reload-success: "<green>配置已重载。"
+reload-failed: "<red>配置重载失败，请检查控制台日志。"
+reload-requires-restart: "<red>Redis 连接参数或 server-id 已改变，请重启服务器使其生效。"
+dm-target-offline: "<red>玩家 <target> 当前不在线，无法私聊。"
+dm-self: "<red>你不能给自己发私聊。"
+glist-header: "<gray>全服在线玩家：</gray><white><players></white><gray> 人，共 </gray><white><servers></white><gray> 个服务器</gray>"
+glist-server: "  <dark_gray>-</dark_gray> <aqua><server></aqua> <dark_gray>(</dark_gray><gray><server_id></gray><dark_gray>)</dark_gray> <white><online></white><gray>/</gray><white><max></white>"
+glist-server-empty: "    <dark_gray>（无玩家）</dark_gray>"
+glist-player: "    <dark_gray>•</dark_gray> <white><player></white>"
+glist-empty: "<gray>当前没有已知的在线玩家。"
+glist-server-not-found: "<red>找不到服务器：</red><white><server></white>"

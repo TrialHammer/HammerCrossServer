@@ -1,0 +1,40 @@
+# Build outputs and local dependencies
+/target/
+/dist/
+/build/
+/libs/
+/out/
+*.jar
+*.class
+/dependency-reduced-pom.xml
+
+# Local Paper instances, runtime data, and deployment configuration
+/run/
+/dev-server/
+/plugins/
+/logs/
+/cache/
+/libraries/
+/versions/
+/world*/
+/server.properties
+/eula.txt
+/config.yml
+/messages.yml
+*.local.yml
+*.local.yaml
+.env
+.env.*
+!.env.example
+*.log
+*.bak
+
+# Editors and OS files
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
